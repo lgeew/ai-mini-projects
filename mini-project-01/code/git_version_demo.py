@@ -14,7 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 # Git Diff 실습: 3을 5로 바꾼 뒤 다시 실행하고 Commit해 보세요.
-n_neighbors = 7 
+n_neighbors = 9
 # Git Merge 실습: KNN 설정 7을 유지합니다.
 
 def main():
