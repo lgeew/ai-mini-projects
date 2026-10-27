@@ -44,7 +44,7 @@ def main():
         writer.writerow(["KNN", n_neighbors, f"{accuracy:.4f}"])
 
     print(f"모델: KNN | n_neighbors: {n_neighbors} | Accuracy: {accuracy:.4f}")
-    print(f"결과 저장: {csv_path}")
+    print(f"평가 결과 파일: {csv_path}")
 
 
 if __name__ == "__main__":
