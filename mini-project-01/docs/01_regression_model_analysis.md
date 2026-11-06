@@ -9,30 +9,41 @@
 
 - **주 평가 지표:** MAE
 - **보조 지표:** RMSE, R²
-- **모델 비교에 사용한 데이터:** ___
-- **MAE를 주요 지표로 선택한 이유:** ___
+- **모델 비교에 사용한 데이터:** Validation Set
+- **MAE를 주요 지표로 선택한 이유:** 대여 건수 단위(건)의 직관적인 예측 오차를 그대로 평균내어 직접적으로 확인할 수 있기 때문
 
 ## 2. 모델별 실험 결과 (CP-04~CP-06)
 
 대표 설정별 Train MAE / Validation MAE를 기록합니다. 전체 실험 결과는 Notebook의 `results_df`에서 확인합니다.
 
-- **DummyRegressor (mean):** Train ___ / Validation ___
-- **LinearRegression:** Train ___ / Validation ___
-- **DecisionTreeRegressor (`max_depth=___`):** Train ___ / Validation ___
-- **RandomForestRegressor (설정 ___):** Train ___ / Validation ___
+- **DummyRegressor (mean):** Train 119.5 / Validation 194.1
+- **LinearRegression:** Train 55.3 / Validation 99.8
+- **DecisionTreeRegressor (`max_depth=20`):** Train 9.6 / Validation 103.1
+- **RandomForestRegressor (설정 B):** Train 22.9 / Validation 96.6
 
 **실험에서 발견한 점**
 
-- **Decision Tree 깊이 변화에 따른 성능:** ___
-- **Random Forest 두 설정의 차이:** ___
-- **Train·Validation 성능 차이에서 관찰한 현상:** ___ (`001_data_analysis`의 2절 `cnt` 평균 차이와 연결해 작성)
+- **Decision Tree 깊이 변화에 따른 성능:** 
+depth를 높일수록 훈련 성능은 높아지지만 테스트 성능이 낮아지는 과적합이 발생
+- **Random Forest 두 설정의 차이:** 
+B가 A에 비해 Valid MAE ,RMSE, R2에서 양호한 결과를 나타냄
+- **Train·Validation 성능 차이에서 관찰한 현상:** 
+MAE 격차
+B = 73.7, A = 65.5, Tree(20) = 93.5 로 큰 차이를 보이지만 'cnt' 평균 격차가 121.3 인걸 감안하면 과대적합이라 단정하기 어려움
+(`001_data_analysis`의 2절 `cnt` 평균 차이와 연결해 작성)
 
 ## 3. 예측 오류 분석 (CP-07)
 
-- **비교한 후보 모델 2개(Validation MAE 상위 2개):** ___ / ___
-- **실제값·예측값 그래프에서 관찰한 점:** ___
-- **시간대별 MAE가 큰 구간:** ___
-- **모델이 상대적으로 잘 예측하지 못하는 상황:** ___
+- **비교한 후보 모델 2개(Validation MAE 상위 2개):** 
+LinearRegression / RandomForest (B)
+- **실제값·예측값 그래프에서 관찰한 점:** 
+LinearRegression의 경우 모두 붉은 대각선 위에 정확히 분포되지 못하고 실제 대여량의 값이 커질수록 예측 대여량의 값이 낮아지는 경향이 보임.  
+RandomForest (B)의 경우 실제 대여량의 값이 낮은 구간에서 예측 대여량의 값이 높다가 점차 안정화 되는 듯한 추이를 보이다가 600~700 시점에서 점차 낮아지는 경향임. 
+- **시간대별 MAE가 큰 구간:** 
+Linear : 17 - 195.8, 18 - 189.0, 8 - 188.1  
+RF (B) : 3 - 172.3, 5 - 120.2, 1 - 119.9
+- **모델이 상대적으로 잘 예측하지 못하는 상황:** 
+Linear의 경우 출퇴근 시간처럼 사람들이 몰려 대여량이 평소보다 급증하는 피크타임 구간을 잘 예측하지 못하고, RF (B)의 경우 전체적으로 Linear 모델에 비해 잘 예측하지만 대여량이 적은 새벽 시간대와 출퇴근 시간대의 오차가 커지는 취약성을 보임.
 - **(선택) 특성 중요도에서 확인한 점:** ___
 
 **분석:** 이 오류가 최종 모델 선택에 어떤 영향을 주었는지 작성합니다.  
