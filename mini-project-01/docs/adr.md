@@ -36,8 +36,10 @@ RandomForestRegressor (A: default, B: max_depth=15)
     1. 전체 검증 오차(Valid MAE 96.607)가 비교 모델 중 가장 낮음.
     2. 선형 회귀 대비 과대적합 격차(Gap 73.7)는 높으나, 트리 깊이 제한(max_depth=15)으로 과도한 과대적합을 억제함.
     3. 시간대별 오차 분석 시 출퇴근 피크 시간대(8시, 17~18시)에서 선형 회귀의 오차 폭발(MAE ~200)을 매우 안정적으로 방어함.
-- **선택 모델의 장점:** 복잡한 비선형 데이터 패턴과 출퇴근 시간대의 급격한 수요 변동을 뛰어난 예측 정확도로 포착함.
-- **남아 있는 한계 또는 개선 방향:** 선형 모델 대비 과대적합 격차(Gap)가 존재하므로, 추가적인 파라미터 튜닝(min_samples_leaf 등)이나 추가 특성 공학을 통한 일반화 성능 개선 여지가 있음.
+- **선택 모델의 장점:** 
+복잡한 비선형 데이터 패턴과 출퇴근 시간대의 급격한 수요 변동을 뛰어난 예측 정확도로 포착함.
+- **남아 있는 한계 또는 개선 방향:** 
+선형 모델 대비 과대적합 격차(Gap)가 존재하므로, 추가적인 파라미터 튜닝(min_samples_leaf 등)이나 추가 특성 공학을 통한 일반화 성능 개선 여지가 있음.
 
 **분석 근거:** `01_regression_model_analysis.md`
 
@@ -51,10 +53,15 @@ RandomForestRegressor (A: default, B: max_depth=15)
 
 구매 세션이 전체의 약 15%뿐인 불균형 데이터이므로, Accuracy만으로 구매 클래스를 얼마나 잘 예측하는지 판단하기 어렵습니다.
 
-- **검토한 선택지:** ___ (예: Accuracy, 구매 클래스 F1, Precision, Recall)
-- **최종 선택한 주 지표와 보조 지표:** ___
-- **선택 근거(DummyClassifier와 LogisticRegression 결과, FP·FN 등):** ___
-- **감수한 한계 또는 추후 확인할 점:** ___
+- **검토한 선택지:** 
+Accuracy, 구매 클래스 F1-score, Precision(정밀도), Recall(재현율) 
+(예: Accuracy, 구매 클래스 F1, Precision, Recall)
+- **최종 선택한 주 지표와 보조 지표:** 
+구매 클래스 F1-score / 보조 지표: Precision, Recall, Confusion Matrix (FP·FN)
+- **선택 근거(DummyClassifier와 LogisticRegression 결과, FP·FN 등):** 
+DummyClassifier의 경우 구매 클래스 F1-score가 0.0으로 소수 클래스를 전혀 학습·예측하지 못하는 한계를 보였으며, LogisticRegression 역시 Valid Accuracy는 0.882로 높지만 구매 클래스 F1-score가 0.49에 그쳐 단순 정확도만으로는 모델 성능을 왜곡할 수 있음을 확인함. 따라서 불균형 데이터에서 소수 클래스 탐지 능력을 정확히 평가하기 위해 F1-score와 혼동행렬(FP·FN)을 지표로 선택함.
+- **감수한 한계 또는 추후 확인할 점:** 
+실제 구매 고객 중 60% 이상을 놓치는 높은 위음성(FN=181) 한계가 있음. 임계값을 낮춰 구매 탐지율(Recall)을 올리면 미구매 고객을 구매자로 착각하는 오탐(FP)이 함께 늘어나는 트레이드오프가 존재하므로, 추후 MLP 모델 및 임계값 튜닝을 통해 최적의 F1-score 균형점을 확인할 예정.
 
 **분석 근거:** `02_classification_data_analysis.md`, `02_classification_model_analysis.md`
 
@@ -64,10 +71,15 @@ RandomForestRegressor (A: default, B: max_depth=15)
 
 기본 손실 함수로 학습한 MLP-A와 클래스 가중 손실을 적용한 MLP-B를 비교하고, 구매 확률을 0/1로 구분하는 임계값(0.3·0.5·0.7)을 선택해야 합니다.
 
-- **검토한 선택지:** ___ (MLP-A / MLP-B의 학습 결과, 임계값 0.3·0.5·0.7)
-- **최종 선택한 MLP 설정·임계값·재학습 에포크:** ___
-- **선택 근거(Validation F1, Precision·Recall, FP·FN 및 가중 손실의 영향):** ___
-- **LogisticRegression과 비교했을 때 선택한 MLP의 특징:** ___
-- **감수한 한계 또는 추후 개선 방향:** ___
+- **검토한 선택지:** 
+MLP-A(기본 손실) 및 MLP-B(가중 손실) 모델의 임계값 [0.3, 0.5, 0.7] 조합 (MLP-A / MLP-B의 학습 결과, 임계값 0.3·0.5·0.7)
+- **최종 선택한 MLP 설정·임계값·재학습 에포크:** 
+MLP-B (weighted BCE), 임계값 0.5 (F1-score 0.645로 최고 성능)
+- **선택 근거(Validation F1, Precision·Recall, FP·FN 및 가중 손실의 영향):** 
+정렬 결과 MLP-B (임계값 0.5)가 F1 0.645로 가장 높은 성능을 기록함. 가중 손실을 적용해 클래스 불균형을 완화하고, Precision(0.575)과 Recall(0.734) 사이의 가장 적절한 균형을 확보함.
+- **LogisticRegression과 비교했을 때 선택한 MLP의 특징:** 
+선형 모델(F1 0.490, FN 181) 대비 F1 점수가 0.645로 대폭 상승하고, 실제 구매자를 놓치는 위음성(FN)을 76건으로 60% 이상 줄임.
+- **감수한 한계 또는 추후 개선 방향:** 
+구매 탐지율(Recall) 향상에 따라 오탐(FP=155)이 다소 증가함. 실제 운영 시 마케팅 비용과 전환 수익을 고려한 비즈니스 관점의 추가 임계값 미세조정이 필요함.
 
 **분석 근거:** `02_classification_model_analysis.md`
