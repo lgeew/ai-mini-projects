@@ -1,0 +1,9 @@
+{
+  "source": "klue/klue · mrc · validation",
+  "seed": 42,
+  "num_documents": 200,
+  "num_validation_queries": 60,
+  "num_test_queries": 20,
+  "sampling": "unique contexts; one labeled relevant snippet per question",
+  "notes": "수업용 단일 정답 문단 검색 세트. KLUE-MRC의 공식 검색 벤치마크가 아님."
+}
