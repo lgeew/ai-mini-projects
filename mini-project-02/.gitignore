@@ -1,0 +1,9 @@
+
+*.safetensors
+mini-project-02/code/nlp_bert_mini/weights/
+
+*.safetensors
+weights/
+
+*.safetensors
+weights/
