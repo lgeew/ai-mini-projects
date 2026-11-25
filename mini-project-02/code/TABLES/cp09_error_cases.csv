@@ -1,0 +1,6 @@
+query_id,question,relevant_doc_id,tfidf_hit1,tfidf_recall3,tfidf_rank,bert_hit1,bert_recall3,bert_rank,sbert_hit1,sbert_recall3,sbert_rank,num_top1_failures,overlap
+QV020,소넨이 상을 받았던 해는?,D138,0,0,,0,0,,0,0,,3,0.42857142857142855
+QV047,자바 API를 개발한 회사는 어디인가?,D048,0,0,,0,0,,0,0,4.0,3,0.3333333333333333
+QV014,이순몽 장군의 자택이 설립된 시기는?,D170,1,1,1.0,0,0,,0,0,,2,0.36363636363636365
+QV019,오브스테트릭스의 뜻에 대해 연구한 사람은?,D128,1,1,1.0,0,0,,0,0,,2,0.5
+QV024,이윤필의 아버지는 누구인가?,D134,0,1,2.0,0,1,3.0,1,1,1.0,2,0.5
